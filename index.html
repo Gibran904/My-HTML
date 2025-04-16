@@ -1,102 +1,115 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Game Tebak Emoji</title>
+  <title>Kuis Pegabut Acak</title>
   <style>
     body {
-      background-color: #282c34;
-      color: #fff;
-      font-family: 'Arial', sans-serif;
-      text-align: center;
-      padding-top: 50px;
+      font-family: sans-serif;
+      padding: 30px;
+      background: #f5f5f5;
     }
-
     .container {
-      background-color: #444;
+      max-width: 500px;
+      margin: auto;
+      background: white;
       padding: 20px;
-      border-radius: 10px;
-      display: inline-block;
-      width: 80%;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
     }
-
+    h1 { text-align: center; }
     button {
-      background-color: #00bcd4;
-      color: #fff;
-      padding: 10px 20px;
-      border: none;
-      margin-top: 20px;
-      cursor: pointer;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-
-    input {
+      width: 100%;
       padding: 10px;
-      font-size: 16px;
-      width: 80%;
       margin-top: 10px;
+      border: none;
+      background: #4CAF50;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
     }
-
-    p {
+    .question {
+      margin-bottom: 20px;
+    }
+    .result {
+      font-size: 18px;
+      font-weight: bold;
+      color: #444;
       margin-top: 20px;
-      font-size: 20px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Game Tebak Emoji</h1>
-    <p>Guess the meaning of the emoji sequence!</p>
-    <p id="emoji"></p>
-    <input type="text" id="answer" placeholder="Jawabannya...">
-    <br>
-    <button onclick="checkAnswer()">Cek Jawaban</button>
-    <button onclick="generateEmoji()">Soal Baru</button>
-    <p id="result"></p>
+    <h1>Kuis Pegabut</h1>
+    <div class="question" id="question">Loading soal...</div>
+    <div id="options"></div>
+    <p class="result" id="result"></p>
   </div>
 
   <script>
-    const emojiList = [
-      { emojis: "🐱🎩🍕", answer: "Kucing pake topi makan pizza" },
-      { emojis: "🧙‍♂️⚔️🧟‍♂️💀", answer: "Penyihir lawan zombie" },
-      { emojis: "🌍🚀🛸", answer: "Perjalanan luar angkasa" },
-      { emojis: "🎤🎶🎧", answer: "Menyanyi di konser" },
-      { emojis: "🏀⛹️‍♂️", answer: "Main basket" },
-      { emojis: "🦸‍♂️🦹‍♂️🌍", answer: "Superhero lawan supervillain" },
-      { emojis: "🚗💨🛣️", answer: "Nyetir cepet di jalan raya" },
-      { emojis: "🏖️🌊☀️", answer: "Liburan di pantai" },
-      { emojis: "💻👾🎮", answer: "Main game komputer" },
-      { emojis: "🍔🍟🥤", answer: "Makan fast food" },
-      { emojis: "🎬👨‍🚀💫", answer: "Film luar angkasa" },
-      { emojis: "🕵️‍♂️🔍🔪", answer: "Detektif nyelidikin pembunuhan" },
-      { emojis: "🥇🎖️🏆", answer: "Menang lomba" },
-      { emojis: "💼👔🏢", answer: "Kerja di kantor" },
-      { emojis: "🍓🍒🍇", answer: "Buah-buahan segar" }
+    const soalList = [
+      {
+        question: "Berapa hasil dari 5 × 7?",
+        correct: 35,
+        options: [25, 0, 42]
+      },
+      {
+        question: "Berapakah 12 + 8?",
+        correct: 20,
+        options: [18, 21, 19]
+      },
+      {
+        question: "Berapakah akar dari 81?",
+        correct: 9,
+        options: [8, 7, 6]
+      },
+      {
+        question: "Berapakah 10 × 10?",
+        correct: 100,
+        options: [90, 110, 120]
+      },
+      {
+        question: "Hasil dari 15 - 6?",
+        correct: 9,
+        options: [8, 10, 7]
+      }
     ];
 
-    let currentQuestion = {};
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const resultEl = document.getElementById("result");
 
-    function generateEmoji() {
-      const randomIndex = Math.floor(Math.random() * emojiList.length);
-      currentQuestion = emojiList[randomIndex];
-      document.getElementById("emoji").innerText = currentQuestion.emojis;
-      document.getElementById("result").innerText = "";
-      document.getElementById("answer").value = "";
-    }
-
-    function checkAnswer() {
-      const userAnswer = document.getElementById("answer").value.trim();
-      if (userAnswer.toLowerCase() === currentQuestion.answer.toLowerCase()) {
-        document.getElementById("result").innerText = "Jawaban Benar! 🎉";
-      } else {
-        document.getElementById("result").innerText = "Jawaban Salah! 😅 Coba Lagi!";
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
       }
     }
 
-    // Load pertama kali
-    generateEmoji();
+    function loadQuestion() {
+      const soal = soalList[Math.floor(Math.random() * soalList.length)];
+      questionEl.innerText = soal.question;
+
+      const allOptions = [soal.correct, ...soal.options];
+      shuffleArray(allOptions);
+
+      optionsEl.innerHTML = '';
+      resultEl.innerText = '';
+      allOptions.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(opt === soal.correct);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(isCorrect) {
+      resultEl.innerText = isCorrect ? "✅ Benar cuy!" : "❌ Salah, coba lagi!";
+    }
+
+    loadQuestion();
   </script>
 </body>
 </html>
