@@ -48,7 +48,7 @@
 
   <div id="leaderboard">
     <h3>Leaderboard</h3>
-    <ul id="scoreList"></ul>
+    <p id="score">Skor: 0</p>
   </div>
 
   <script>
@@ -62,7 +62,7 @@
       { question: "25 - 8", answer: 17 },
       { question: "3 * 9", answer: 27 },
       { question: "36 / 6", answer: 6 },
-      { question: "100000 * 15", answer: 1500000 }
+      { question: "100000 * 15", answer: 1500000 },
       // Bisa ditambah lagi soal matematika
     ];
 
@@ -93,30 +93,19 @@
 
     // Fungsi untuk update leaderboard
     function updateLeaderboard() {
-      const scoreList = JSON.parse(localStorage.getItem("scoreList")) || [];
-      scoreList.push(score);
-      scoreList.sort((a, b) => b - a); // Sort skor dari yang terbesar
-      localStorage.setItem("scoreList", JSON.stringify(scoreList));
-
+      localStorage.setItem("playerScore", score); // Simpan skor pemain di localStorage
       displayLeaderboard();
     }
 
     // Fungsi untuk menampilkan leaderboard
     function displayLeaderboard() {
-      const scoreList = JSON.parse(localStorage.getItem("scoreList")) || [];
-      const scoreListElement = document.getElementById("scoreList");
-      scoreListElement.innerHTML = ""; // Clear daftar lama
-
-      scoreList.forEach((score, index) => {
-        const listItem = document.createElement("li");
-        listItem.textContent = `#${index + 1}: ${score} poin`;
-        scoreListElement.appendChild(listItem);
-      });
+      const playerScore = localStorage.getItem("playerScore") || 0;
+      document.getElementById("score").textContent = `Skor: ${playerScore}`;
     }
 
     window.onload = function() {
       randomQuestion();
-      displayLeaderboard(); // Menampilkan leaderboard saat pertama kali load
+      displayLeaderboard(); // Menampilkan skor saat pertama kali load
     };
   </script>
 
