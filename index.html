@@ -1,115 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Kuis Pegabut Acak</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Game Matematika!</title>
   <style>
     body {
       font-family: sans-serif;
-      padding: 30px;
-      background: #f5f5f5;
-    }
-    .container {
-      max-width: 500px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    }
-    h1 { text-align: center; }
-    button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border: none;
-      background: #4CAF50;
-      color: white;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
+      text-align: center;
+      background-color: #f0f0f0;
+      padding: 50px;
     }
     .question {
-      margin-bottom: 20px;
+      font-size: 2rem;
+      margin: 20px;
     }
-    .result {
-      font-size: 18px;
-      font-weight: bold;
-      color: #444;
+    input {
+      font-size: 1.5rem;
+      padding: 10px;
       margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    #leaderboard {
+      margin-top: 30px;
+      font-size: 1.1rem;
+      font-weight: normal;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Kuis Pegabut</h1>
-    <div class="question" id="question">Loading soal...</div>
-    <div id="options"></div>
-    <p class="result" id="result"></p>
+
+  <h1>Game Matematika!</h1>
+  <div class="question" id="question">5 + 3 = ?</div>
+  <input type="text" id="answer" placeholder="Jawaban kamu...">
+  <br>
+  <button onclick="checkAnswer()">Submit</button>
+  <div id="result"></div>
+
+  <div id="leaderboard">
+    <h3>Leaderboard</h3>
+    <ul id="scoreList"></ul>
   </div>
 
   <script>
-    const soalList = [
-      {
-        question: "Berapa hasil dari 5 × 7?",
-        correct: 35,
-        options: [25, 0, 42]
-      },
-      {
-        question: "Berapakah 12 + 8?",
-        correct: 20,
-        options: [18, 21, 19]
-      },
-      {
-        question: "Berapakah akar dari 81?",
-        correct: 9,
-        options: [8, 7, 6]
-      },
-      {
-        question: "Berapakah 10 × 10?",
-        correct: 100,
-        options: [90, 110, 120]
-      },
-      {
-        question: "Hasil dari 15 - 6?",
-        correct: 9,
-        options: [8, 10, 7]
-      }
+    // Soal matematika yang bisa diacak
+    const questions = [
+      { question: "5 + 3", answer: 8 },
+      { question: "12 - 4", answer: 8 },
+      { question: "7 * 6", answer: 42 },
+      { question: "9 / 3", answer: 3 },
+      { question: "15 + 6", answer: 21 },
+      { question: "25 - 8", answer: 17 },
+      { question: "3 * 9", answer: 27 },
+      { question: "36 / 6", answer: 6 },
+      { question: "100000 * 15", answer: 1500000 }
+      // Bisa ditambah lagi soal matematika
     ];
 
-    const questionEl = document.getElementById("question");
-    const optionsEl = document.getElementById("options");
-    const resultEl = document.getElementById("result");
+    let currentQuestion;
+    let score = 0;
 
-    function shuffleArray(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+    // Fungsi untuk mengambil soal acak
+    function randomQuestion() {
+      const index = Math.floor(Math.random() * questions.length);
+      currentQuestion = questions[index];
+      document.getElementById("question").textContent = `${currentQuestion.question} = ?`;
+      document.getElementById("answer").value = "";
+      document.getElementById("result").textContent = "";
+    }
+
+    // Fungsi untuk mengecek jawaban
+    function checkAnswer() {
+      const userAnswer = Number(document.getElementById("answer").value.trim());
+      if (userAnswer === currentQuestion.answer) {
+        document.getElementById("result").textContent = "🎉 Jawaban benar!";
+        score++;
+        updateLeaderboard();
+        setTimeout(randomQuestion, 1000); // Ganti soal setelah 1 detik
+      } else {
+        document.getElementById("result").textContent = "❌ Salah, coba lagi!";
       }
     }
 
-    function loadQuestion() {
-      const soal = soalList[Math.floor(Math.random() * soalList.length)];
-      questionEl.innerText = soal.question;
+    // Fungsi untuk update leaderboard
+    function updateLeaderboard() {
+      const scoreList = JSON.parse(localStorage.getItem("scoreList")) || [];
+      scoreList.push(score);
+      scoreList.sort((a, b) => b - a); // Sort skor dari yang terbesar
+      localStorage.setItem("scoreList", JSON.stringify(scoreList));
 
-      const allOptions = [soal.correct, ...soal.options];
-      shuffleArray(allOptions);
+      displayLeaderboard();
+    }
 
-      optionsEl.innerHTML = '';
-      resultEl.innerText = '';
-      allOptions.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.innerText = opt;
-        btn.onclick = () => checkAnswer(opt === soal.correct);
-        optionsEl.appendChild(btn);
+    // Fungsi untuk menampilkan leaderboard
+    function displayLeaderboard() {
+      const scoreList = JSON.parse(localStorage.getItem("scoreList")) || [];
+      const scoreListElement = document.getElementById("scoreList");
+      scoreListElement.innerHTML = ""; // Clear daftar lama
+
+      scoreList.forEach((score, index) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = `#${index + 1}: ${score} poin`;
+        scoreListElement.appendChild(listItem);
       });
     }
 
-    function checkAnswer(isCorrect) {
-      resultEl.innerText = isCorrect ? "✅ Benar cuy!" : "❌ Salah, coba lagi!";
-    }
-
-    loadQuestion();
+    window.onload = function() {
+      randomQuestion();
+      displayLeaderboard(); // Menampilkan leaderboard saat pertama kali load
+    };
   </script>
+
 </body>
 </html>
