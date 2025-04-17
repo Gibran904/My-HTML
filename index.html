@@ -35,6 +35,11 @@
       font-size: 1.1rem;
       font-weight: normal;
     }
+  body {
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  }
   </style>
 </head>
 <body>
@@ -218,6 +223,26 @@
       randomQuestion();
       displayLeaderboard(); // Menampilkan skor saat pertama kali load
     };
+   // Blokir klik kanan
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Blokir tekan lama (long press)
+  let touchTimer;
+
+  document.addEventListener('touchstart', () => {
+    touchTimer = setTimeout(() => {
+      alert("Eh jangan di-hold ya 😤");
+    }, 7000); // 700ms = lama nahan
+  });
+
+  document.addEventListener('touchend', () => {
+    clearTimeout(touchTimer);
+  });
+  window.addEventListener('scroll', () => {
+    if (window.scrollY < 100) {
+      window.scrollTo(0, 100); // paksa balik ke bawah
+    }
+  });
   </script>
 
 </body>
