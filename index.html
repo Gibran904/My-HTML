@@ -195,17 +195,14 @@
     }
 
     // Fungsi untuk mengecek jawaban
-   if (userAnswer === Number(currentQuestion.answer)) {
-  const resultEl = document.getElementById("result");
-  resultEl.textContent = "🎉 Jawaban benar!";
-  resultEl.style.color = "green";
-  resultEl.style.transform = "scale(1.2)";
-  setTimeout(() => {
-    resultEl.style.transform = "scale(1)";
-  }, 500);
-  // lanjut ke soal berikutnya
-
-      } else {
+  function checkAnswer() {
+       const userAnswer = Number(document.getElementById("answer").value.trim());
+       if (userAnswer === currentQuestion.answer) {
+         document.getElementById("result").textContent = "🎉 Jawaban benar!";
+         score++;
+         updateLeaderboard();
+         setTimeout(randomQuestion, 1000); // Ganti soal setelah 1 detik
+   } else {
         document.getElementById("result").textContent = "❌ Salah, coba lagi!";
       }
     }
